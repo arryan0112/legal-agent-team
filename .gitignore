@@ -1,0 +1,48 @@
+# --------------------------
+# Python cache & compiled files
+# --------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --------------------------
+# Virtual environment
+# --------------------------
+venv/
+env/
+.env/
+
+# --------------------------
+# OS-specific files
+# --------------------------
+.DS_Store
+Thumbs.db
+
+# --------------------------
+# Streamlit local files
+# --------------------------
+.streamlit/
+
+# --------------------------
+# Qdrant / vector DB storage (if local)
+# --------------------------
+qdrant_data/
+
+# --------------------------
+# Logs
+# --------------------------
+*.log
+
+# --------------------------
+# VSCode / IDE settings
+# --------------------------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --------------------------
+# Ignore any sensitive config files
+# --------------------------
+config.json
+credentials.json
