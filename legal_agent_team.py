@@ -29,8 +29,8 @@ def init_session_state():
         st.session_state.vector_db = None
     if 'knowledge_base' not in st.session_state:
         st.session_state.knowledge_base = None
-    if 'processed_files' not in st.session_state:
-        st.session_state.processed_files = set()
+    if 'processed_file' not in st.session_state:  # 👈 single file only
+        st.session_state.processed_file = None
 
 # --------------------------
 # Process PDF and create embeddings
@@ -50,20 +50,22 @@ def process_pdf(file):
     return chunks
 
 # --------------------------
-# Initialize Qdrant vector store
+# Initialize Qdrant vector store (force recreate for new upload)
 # --------------------------
-def init_vectorstore(chunks):
+def init_vectorstore(chunks, collection_name="legal_documents"):
     embeddings = OpenAIEmbeddings(
         model="text-embedding-3-small",
         openai_api_key=st.session_state.openai_api_key
     )
 
+    # Force recreate ensures old embeddings are wiped
     vector_db = Qdrant.from_texts(
         texts=chunks,
         embedding=embeddings,
         url=st.session_state.qdrant_url,
         api_key=st.session_state.qdrant_api_key,
-        collection_name="legal_documents"
+        collection_name=collection_name,
+        force_recreate=True  # 👈 clears old data
     )
     return vector_db
 
@@ -105,11 +107,11 @@ def main():
 
     # Upload PDF
     uploaded_file = st.file_uploader("Upload Legal PDF", type=["pdf"])
-    if uploaded_file and uploaded_file.name not in st.session_state.processed_files:
+    if uploaded_file and uploaded_file.name != st.session_state.processed_file:
         with st.spinner("Processing PDF and creating embeddings..."):
             chunks = process_pdf(uploaded_file)
             st.session_state.vector_db = init_vectorstore(chunks)
-            st.session_state.processed_files.add(uploaded_file.name)
+            st.session_state.processed_file = uploaded_file.name
             st.success("✅ Document processed and embeddings created!")
 
     if not st.session_state.vector_db:

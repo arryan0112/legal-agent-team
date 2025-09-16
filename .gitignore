@@ -46,3 +46,4 @@ qdrant_data/
 # --------------------------
 config.json
 credentials.json
+.env
